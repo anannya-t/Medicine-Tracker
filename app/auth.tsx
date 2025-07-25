@@ -1,16 +1,59 @@
-import { useState } from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-//import { useRouter} from 'expo-router';
-//import * as LocalAuthentication from 'expo-local-authentication';
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
+import * as LocalAuthentication from 'expo-local-authentication';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const {width} = Dimensions.get('window');
+
+
 export default function AuthScreen() {
 
     const [hasBiometrics, setHasBiometrics] = useState(false);
     const [isAuthenticating, setIsAuthenticating] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
+
+    useEffect(() => {
+        checkBiometrics();
+    }, [])
+
+    const checkBiometrics = async () => {
+        const hasHardware = await LocalAuthentication.hasHardwareAsync();
+        const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+        setHasBiometrics(hasHardware && isEnrolled);
+    };
+
+    const authenticate = async () => {
+        try {
+            setIsAuthenticating(true);
+            setError(null);
+
+            const hasHardware = await LocalAuthentication.hasHardwareAsync();
+            const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+            const supportedTypes = await LocalAuthentication.supportedAuthenticationTypesAsync();
+            const auth = await LocalAuthentication.authenticateAsync({
+                promptMessage: hasHardware && isEnrolled 
+                ? 'Use Face/Touch ID' : 'Enter PIN',
+                fallbackLabel: 'Use PIN',
+                cancelLabel: 'Cancel',
+                disableDeviceFallback: false,
+            });
+
+            if(auth.success) {
+                router.replace("/")
+            }
+
+            else {
+                setError("Authentication Error: Please try again")
+            }
+        }
+        
+        catch(error) {
+
+        }
+    };
 
     return (
         <LinearGradient colors={["#4CAF50", "#2E7D32"]} style={styles.container}>
@@ -34,7 +77,7 @@ export default function AuthScreen() {
 
                     <TouchableOpacity 
                         style={[styles.button, isAuthenticating && styles.buttonDisabled]}
-                        // onPress={authenticate}
+                        onPress={authenticate}
                         disabled={isAuthenticating}
                         >
                         <Ionicons
