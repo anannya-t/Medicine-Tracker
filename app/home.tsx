@@ -86,6 +86,11 @@ export default function HomeScreen () {
                         </View>
                         <TouchableOpacity style={styles.notificationButton}>
                             <Ionicons name="notifications-outline" size={24} color="white"> </Ionicons>
+                            {
+                                <View style={styles.notificationBadge}>
+                                    <Text style={styles.notificationCount}>1</Text>
+                                </View>
+                            }
                         </TouchableOpacity>
                     </View>
                     <CircularProgress
@@ -278,8 +283,8 @@ export default function HomeScreen () {
   },
   notificationBadge: {
     position: "absolute",
-    top: -4,
-    right: -4,
+    //op: -4,
+    right: -0.1,
     backgroundColor: "#FF5252",
     minWidth: 20,
     height: 20,
