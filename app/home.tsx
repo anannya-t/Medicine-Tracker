@@ -3,12 +3,44 @@ import { useEffect, useRef } from "react";
 //import {useCallback} from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { Link } from "expo-router";
 import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
 const {width} = Dimensions.get('window');
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+const QUICK_ACTIONS = [
+  {
+    icon: "add-circle-outline" as const,
+    label: "Add\nMedication",
+    route: "/medications/add" as const,
+    color: "#2E7D32",
+    gradient: ["#4CAF50", "#2E7D32"] as [string, string],
+  },
+  {
+    icon: "calendar-outline" as const,
+    label: "Calendar\nView",
+    route: "/calendar" as const,
+    color: "#1976D2",
+    gradient: ["#2196F3", "#1976D2"] as [string, string],
+  },
+  {
+    icon: "time-outline" as const,
+    label: "History\nLog",
+    route: "/history" as const,
+    color: "#C2185B",
+    gradient: ["#E91E63", "#C2185B"] as [string, string],
+  },
+  {
+    icon: "medical-outline" as const,
+    label: "Refill\nTracker",
+    route: "/refills" as const,
+    color: "#E64A19",
+    gradient: ["#FF5722", "#E64A19"] as [string, string],
+  },
+];
 
 interface CircularPrProgressProps {
     progress: number;
@@ -41,12 +73,14 @@ function CircularProgress ({
     });
 
     return (
-        <View>
-            <View>
-                <Text> {Math.round(progress)}%</Text>
-                <Text> {completedDoses} of {totalDoses} doses </Text>
+        <View style={styles.progressContainer}>
+            <View style={styles.progressTextContainer}>
+                <Text style={styles.progressPercentage}> {Math.round(progress)}%</Text>
+                <Text style={styles.progressLabel}> 
+                    {completedDoses} of {totalDoses} doses
+                </Text>
             </View>
-            <Svg width={size} height={size}>
+            <Svg width={size} height={size} style={styles.progressRing}>
                 <Circle
                     cx={size / 2}
                     cy={size / 2}
@@ -94,12 +128,38 @@ export default function HomeScreen () {
                         </TouchableOpacity>
                     </View>
                     <CircularProgress
-                        progress={0.5}
+                        progress={50}
                         totalDoses={10}
                         completedDoses={5}
                     />
                 </View>
             </LinearGradient>
+
+            <View style={styles.content}>
+                <View>
+                    <Text> Quick Actions</Text>
+                    <View>
+                        {QUICK_ACTIONS.map((action)=> (
+                            <Link href={action.route} key={action.label} asChild>
+                                <TouchableOpacity>
+                                    <LinearGradient colors={action.gradient}
+                                    style={styles.actionGradient}>
+                                        <View style={styles.actionContent}>
+                                        <View style={styles.actionIcon}>
+                                            <Ionicons name={action.icon} size={28} color="white" />
+                                        </View>
+                                        <Text style={styles.actionLabel}>{action.label}</Text>
+                                    </View>
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            </Link>
+                        ))}
+                    </View>
+                </View>
+
+            </View>
+
+
         </ScrollView>
     )
 }
