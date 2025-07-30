@@ -136,12 +136,12 @@ export default function HomeScreen () {
             </LinearGradient>
 
             <View style={styles.content}>
-                <View>
-                    <Text> Quick Actions</Text>
-                    <View>
+                <View style={styles.quickActionsContainer}>
+                    <Text style={styles.sectionTitle}> Quick Actions</Text>
+                    <View style={styles.quickActionsGrid}>
                         {QUICK_ACTIONS.map((action)=> (
                             <Link href={action.route} key={action.label} asChild>
-                                <TouchableOpacity>
+                                <TouchableOpacity style={styles.actionButton}>
                                     <LinearGradient colors={action.gradient}
                                     style={styles.actionGradient}>
                                         <View style={styles.actionContent}>
