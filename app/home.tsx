@@ -159,6 +159,12 @@ export default function HomeScreen () {
 
             </View>
 
+            <View>
+                <View>
+                    <Text>Today's Schedule</Text>
+                </View>
+            </View>
+
 
         </ScrollView>
     )
